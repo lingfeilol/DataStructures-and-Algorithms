@@ -8,6 +8,7 @@ typedef struct Node
 	QDataType val;
 	struct Node *next;
 } Node;
+
 //头删和尾插
 typedef struct Queue{
 	Node* front;   //链表第一个节点
