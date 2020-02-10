@@ -8,7 +8,7 @@ void swap(HPDataType* h1, HPDataType* h2)
 }
 void JustDown(HPDataType* a, int n, int root)
 {
-	int parent = root;//传入要开始向下调整的父亲节点1
+	int parent = root;//传入要开始向下调整的根节点
 	int child = 2 * parent + 1;//左孩子
 	while (child < n)
 	{
@@ -16,7 +16,7 @@ void JustDown(HPDataType* a, int n, int root)
 		{
 			child = child + 1;
 		}
-		if (a[child]>a[parent])//子节点比父节点大，则交换
+		if (a[child]>a[parent])//子节点比父节点大，则交换    //控制大于小于号可调整成大堆或者小堆
 		{
 			swap(&a[child], &a[parent]);
 			//更新条件继续向下
@@ -35,7 +35,7 @@ void JustUp(HPDataType* a, int n, int _child)
 	int parent = (child - 1) / 2;//根据子节点的下标找到父亲节点下标
 	while (parent >= 0)
 	{
-		if (a[child] < a[parent])//子节点比父亲节点还小，交换
+		if (a[child] >a[parent])//子节点比父亲节点还大，交换
 		{
 			swap(&a[child], &a[parent]);
 			//更新条件 继续迭代
@@ -52,8 +52,9 @@ void JustUp(HPDataType* a, int n, int _child)
 void HeapCreate(Heap* hp, HPDataType* a, int n)
 {
 	hp->_a = (HPDataType*)malloc(sizeof(HPDataType));
-	hp->_capacity = hp->_size = n;
-	memcpy(hp->_a, a, sizeof(HPDataType) * n);
+	hp->_capacity = 2 * n;
+	hp->_size = n;
+	memcpy(hp->_a, a, sizeof(HPDataType) * n);//memcpy可以拷贝自定义类型数据
 	// 建堆： 从最后一个非叶子节点开始进行调整
 	// 最后一个非叶子节点，按照规则： （最后一个位置索引 - 1） / 2
 	// 最后一个位置索引： n - 1
@@ -62,6 +63,15 @@ void HeapCreate(Heap* hp, HPDataType* a, int n)
 	{
 		JustDown(hp->_a, hp->_size, i);
 	}
+
+	//向上调整算法初始化堆
+	//从最后一个节点开始调整
+	/*int end = n - 1;
+	while (end > 0)
+	{
+		JustUp(hp->_a, hp->_size, end);
+		end--;
+	}*/
 }
 // 堆的销毁
 void HeapDestory(Heap* hp)
@@ -73,6 +83,7 @@ void HeapDestory(Heap* hp)
 // 堆的插入
 void HeapPush(Heap* hp, HPDataType x)
 {
+	assert(hp);
 	if (hp->_size == hp->_capacity)//检查容量是否满了， 扩容
 	{
 		hp->_capacity *= 2;
@@ -109,6 +120,7 @@ int HeapEmpty(Heap* hp)
 //打印堆
 void HeapPrintf(Heap* hp)
 {
+	assert(hp);
 	for (int i = 0; i < hp->_size; i++)
 	{
 		printf("%d ", hp->_a[i]);
@@ -124,7 +136,7 @@ void HeapSort(int* a, int n)
 	// 放到它该有的位置（当前堆的最后一个位置
 	
 	//1.所以先创建维护一个大堆
-	for (int i = (n - 2) / 2; i > 0; i--)
+	for (int i = (n - 2) / 2; i >= 0; i--)
 	{
 		JustDown(a, n, i);
 	}
@@ -133,7 +145,7 @@ void HeapSort(int* a, int n)
 	while (end > 0)
 	{
 		swap(&a[0], &a[end]);//大值换到数组最后面
-		JustDown(a, n, 0);//再调整，准备下一步再调换
-		end--;
+		JustDown(a, end, 0);//再调整，准备下一步再调换
+		--end;
 	}
 }
