@@ -131,8 +131,122 @@ void BubbleSort(int* a, int n)
         end--;
     }
 }
+//三数曲中优化找基准值
+//1.三数区中法   最左边  中间   最右边三个数中的中位数的下标
+//先找出数组中三者之间中间数的下标 作为快排的基准值
+int Gitmidindex(int *a,int begin,int end)
+{
+	int mid=(begin+end)/2;
+	if(a[begin]<a[mid])
+	{
+		if(a[end]>a[mid])
+		{
+			return mid;
+		}
+		else if(a[begin]>a[end])
+		{
+			return begin;
+		}
+		else
+			return end;
+	}
+	else //a[begin]>a[mid]
+	{
+		if(a[mid]>a[end])
+		{
+			return mid; 
+		}
+		else if(a[end]>a[begin])
+		{
+			return begin;
+		}
+		else
+			return end;
+	
+	}
+}
+
+int partsort(int *a,int begin,int end)
+{
+    int mid=Gitmidindex(a,begin,end);
+    swap(&a[begin],&a[mid]);
+    int key=a[begin];//保存基准值
+    int start=begin;
+    while(begin<end)
+    {
+        while(begin<end && a[end]>=key)
+        {
+            end--;
+        }
+        while(begin <end && a[begin]<=key)
+        {
+            begin++;
+        }
+        swap(&a[begin],&a[end]);
+    }
+    swap(&a[start],&a[begin]);
+    return begin;
+}
+//2.挖坑优化
+int partsort2(int *a,int begin,int end)
+{
+    int key=a[begin];//把自己变成坑
+    while(begin<end)
+    {
+        while(begin<end && a[end]>=key)
+        {
+            end--;
+        }
+        a[begin]=a[end];
+        while(begin<end && a[begin<=key])
+        {
+            begin++;
+        }
+        a[end]=a[begin];
+    }
+    a[begin]=key;
+    return begin;
+    
+}
+//3.前后指针法
+int partsort3(int *a,int begin,int end)
+{
+    int key=a[begin];
+    int prev=begin;
+    int cur=begin+1;
+    while(cur<=end)
+    {
+        if(a[cur]<key)
+        {
+            prev++;
+            swap(&a[prev],&a[cur]);
+            cur++;
+        }
+        else
+            cur++;
+    }
+    swap(&a[prev],&a[begin]);
+    return prev;
+}
+void QuickSort(int *a,int begin,int end)
+{
+    if(begin<end)
+    {
+        if(end-begin+1<10)//小区间优化，数据个数小于一定值，就可以用插入来处理小数据
+        {
+            InsertSort(a+begin,end-begin+1);
+        }
+        else
+        {
+            int keymid=partsort3(a,begin,end);
+            QuickSort(a,begin,keymid-1);
+            QuickSort(a,keymid+1,end);
+        }
+        
+    }
+}
 int* sortArray(int* nums, int numsSize, int* returnSize){
-    BubbleSort(nums,numsSize);
+    QuickSort(nums,0,numsSize-1);
     *returnSize=numsSize;
     return nums;
 
