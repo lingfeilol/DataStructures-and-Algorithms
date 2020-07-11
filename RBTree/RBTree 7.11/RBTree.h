@@ -69,7 +69,7 @@ struct Treeiterator
 			}
 			_node = subleft;
 		}
-		else //右边为空，按照搜索树的中序遍历则说明整棵树都已经走完 ，需要回到此子树的根节点为左子树的祖先节点
+		else //右边为空，按照搜索树的中序遍历则说明当前树都已经走完 ，需要回到以此子树的根节点为左子树的祖先节点
 		{
 			Node* cur = _node;
 			Node* parent = cur->_parent;
@@ -101,7 +101,7 @@ struct Treeiterator
 			Node* parent = cur->_parent;
 			while (parent && cur == parent->_left)
 			{
-				cur =parent;
+				cur = parent;
 				parent = parent->_parent;
 			}
 			_node = parent;
@@ -120,7 +120,7 @@ struct Treeiterator
 
 
 
-template<class K, class T,class KeyofT >   //是键值对还是单个键值，有定义对象时的参数决定
+template<class K, class T,class KeyofT >   //是键值对还是单个键值，由定义对象时的参数决定
 class RBTree
 {
 	typedef RBTreeNode<T> Node;
@@ -156,12 +156,12 @@ public:
 		Node* cur = _root;
 		while (cur)
 		{
-			if (cur->_data.first <data.first)  //根据键值对的关键字来判断
+			if (koft(cur->_data) < koft(data))  //根据键值对的关键字来判断
 			{
 				parent = cur;
 				cur = cur->_right;
 			}
-			else if (cur->_data.first > data.first)
+			else if (koft(cur->_data) > koft(data))
 			{
 				parent = cur;
 				cur = cur->_left;
@@ -171,12 +171,12 @@ public:
 		}
 		cur = new Node(data);
 		Node* returnnode = cur;
-		if (cur == parent->_left)
+		if (koft(cur->_data) < koft(parent->_data))
 		{
 			parent->_left = cur;
 			cur->_parent = parent;
 		}
-		else if (cur == parent->_right)
+		else 
 		{
 			parent->_right = cur;
 			cur->_parent = parent;

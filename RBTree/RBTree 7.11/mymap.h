@@ -30,12 +30,12 @@ namespace mytest
 		//直接调用这个数据类型的构造函数，创建一个匿名对象即V()为0。
 		V& operator[](const T& key)
 		{
-			pair<iterator, bool> ret = _rbtree.Insert({ key, V() }); // V()便是0
+			pair<iterator, bool> ret = _rbtree.Insert(make_pair(key,V())); // V()便是0
 			return ret.first->second;
 		}
 
 	private:
-		RBTree<T, T, KeyofT> _rbtree;
+		RBTree<T, pair<T,V>, KeyofT> _rbtree;
 	};
 
 	void test_map()
@@ -64,7 +64,7 @@ namespace mytest
 
 		string strs[] = { "西瓜", "樱桃", "西瓜", "苹果", "西瓜", "西瓜", "西瓜", "苹果" };
 		map<string, int> countMap;
-		for (auto& str : strs)
+		for (const auto& str : strs)
 		{
 			// 1、如果水果不在map中，则operator[]会插入pair<str, 0>, 返回映射对象(次数)的引用进行了++。
 			// 2、如果水边在map中，则operator[]返回水果对应的映射对象(次数)的引用，对它++。
